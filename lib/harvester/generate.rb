@@ -4,13 +4,14 @@ require_relative '../harvester'
 require_relative 'generate/link_absolutizer'
 require_relative 'generate/entity_translator'
 
+require 'fileutils'
+require 'time'
 require 'rexml/document'
 begin
   require 'xml/xslt'
 rescue LoadError
   require 'xml/libxslt'
 end
-require 'time'
 
 class Harvester
   def generate!
@@ -18,15 +19,19 @@ class Harvester
     xslt     = XML::XSLT.new
     xslt.xml = f.generate_root.to_s
 
-    templatedir = @config['settings']['templates'] || ( File.expand_path(File.dirname(__FILE__)) + '/../../templates' )
+    templatedir = @config['settings']['templates'] || ( File.dirname(__FILE__) + '/../../data/templates' )
     outputdir   = @config['settings']['output']
 
+    FileUtils.mkdir_p outputdir
+    puts "Copying static files"
+    FileUtils.cp_r Dir[File.join( templatedir, 'static', '*' )], outputdir
+
     Dir.foreach(templatedir) { |templatefile|
-      next if templatefile =~ /^\./
+      next if templatefile =~ /^\./ || templatefile == 'static'
 
       puts "Processing #{templatefile}"
-      xslt.xsl = "#{templatedir}/#{templatefile}"
-      File::open("#{outputdir}/#{templatefile}", 'w') { |f| f.write(xslt.serve) }
+      xslt.xsl = File.join( templatedir, templatefile )
+      File::open( File.join( outputdir, templatefile ), 'w') { |f| f.write(xslt.serve) }
     }
   end
 end
