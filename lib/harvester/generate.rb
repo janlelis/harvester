@@ -19,20 +19,27 @@ class Harvester
     xslt     = XML::XSLT.new
     xslt.xml = f.generate_root.to_s
 
-    templatedir = @config['settings']['templates'] || ( File.dirname(__FILE__) + '/../../data/templates' )
-    outputdir   = @config['settings']['output']
+    default_template_dir = File.dirname(__FILE__) + '/../../data/templates'
+    template_dir = @config['settings']['templates'] || default_template_dir
+    output_dir   = @config['settings']['output']
 
-    FileUtils.mkdir_p outputdir
+    FileUtils.mkdir_p output_dir
     puts "Copying static files"
-    FileUtils.cp_r Dir[File.join( templatedir, 'static', '*' )], outputdir
+    FileUtils.cp_r Dir[File.join( template_dir, 'static', '*' )], output_dir
 
-    Dir.foreach(templatedir) { |templatefile|
-      next if templatefile =~ /^\./ || templatefile == 'static'
+    begin
+      Dir.foreach(template_dir) { |template_file|
+        next if template_file =~ /^\./ || template_file == 'static'
 
-      puts "Processing #{templatefile}"
-      xslt.xsl = File.join( templatedir, templatefile )
-      File::open( File.join( outputdir, templatefile ), 'w') { |f| f.write(xslt.serve) }
-    }
+        puts "Processing #{template_file}"
+        xslt.xsl = File.join( template_dir, template_file )
+        File::open( File.join( output_dir, template_file ), 'w') { |f| f.write(xslt.serve) }
+      }
+    rescue Errno::ENOENT
+      $stderr.puts "Couldn't find templates directory, fallback to default templates!"
+      template_dir = default_template_dir
+      retry
+    end
   end
 end
 
