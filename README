@@ -1,0 +1,52 @@
+Harvester 0.8
+=============
+
+Astro (2005-2008)
+Neingeist
+Tigion
+Josef Spillner
+Others (MySQL patch)
+
+
+About
+=====
+
+The Harvester is a web-based RSS-Aggregator
+
+A running instance can be seen at:
+http://astroblog.spaceboyz.net/harvester/
+
+
+Installation
+============
+
+Install the harvester with
+
+  gem install harvester
+
+You can now create a new harvester project with
+
+  harvester new <project_directory>
+
+Then you will need to configure config.yaml, collections.yaml and the templates to suit your needs (see below).
+
+Just run
+
+  harvester
+
+in this directory to see your first results ;)
+
+Usage
+=====
+
+[how harvester and its binaries work]
+
+[what are and what to set in config.yaml and collections.yaml]
+
+
+Not covered yet:
+- DB
+- cronjob
+- Templates
+- Chart
+- Jabberbot
