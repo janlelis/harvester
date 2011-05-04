@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+# encoding: utf-8
+
+if sub_command = ARGV.shift
+  path = File.expand_path( File.dirname(__FILE__) ) # TODO remove absolute path when packaged as gem + check for options first
+  exec "#{path}/harvester-#{sub_command}", *ARGV
+end
+
+# default:
+require_relative '../lib/harvester/fetch'
+require_relative '../lib/harvester/generate'
+require_relative '../lib/harvester/chart'
+
+harve = Harvester.new_from_argv
+harve.fetch!
+harve.generate!
+harve.chart!

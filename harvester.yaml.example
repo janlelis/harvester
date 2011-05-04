@@ -1,0 +1,33 @@
+---
+# TODO: add example config data
+# TODO: separate collections from general config
+db:
+#  driver: dbi:SQLite3:harvestr.sqlite3
+  driver: dbi:Pg:harvest
+  user: harvester
+  password: "1"
+settings:
+  size limit: 202400
+  timeout: 90
+  templates: templates
+  output: html
+jabber:
+  host: localhost
+  jid: user@localhost/harvester
+  password: "1"
+  interval: 120
+
+collections:
+  ticker:
+  #-
+  projects:
+  #-
+  links:
+  #-
+  blogs:
+  #-
+  photos:
+  #-
+  microblogs:
+  #-
+

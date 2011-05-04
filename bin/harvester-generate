@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+# encoding: utf-8
+
+require_relative '../lib/harvester/generate'
+Harvester.new_from_argv.generate!

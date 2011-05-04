@@ -1,7 +1,6 @@
+# encoding: utf-8
 # Magic RSS
 # Helps getting around with RSS while ignoring standards and tolerating much
-
-$KCODE = "UTF-8"
 
 require 'rexml/document'
 require 'cgi'

@@ -1,18 +1,17 @@
-#!/usr/bin/env ruby
+# encoding: ascii
 
-TABLE_SUBSCRIPTIONS = 'jabbersubscriptions'
-TABLE_SETTINGS = 'jabbersettings'
+require_relative '../harvester'
 
-require 'fastthread'
-require 'rubygems'
-require 'dbi'
-require 'yaml'
+#require 'fastthread'
 require 'xmpp4r'
 require 'xmpp4r/discovery'
 require 'xmpp4r/version'
 require 'xmpp4r/roster'
 require 'xmpp4r/dataforms'
 require 'xmpp4r/vcard'
+
+TABLE_SUBSCRIPTIONS = 'jabbersubscriptions'
+TABLE_SETTINGS = 'jabbersettings'
 
 Jabber::debug = true
 
@@ -55,7 +54,7 @@ class Interview < ChatDialog
     @collections = collections
     @collections_keys = collections.keys
 
-    set_state("Hello, I'm the Harvester Jabber service, aka AstroBot. " +
+    set_state("Hello, I'm the Harvester Jabber service, aka NotAstroBot. " +
               "Type \"start\" to subscribe to feeds selectively.") { |msg|
       if msg == 'start'
         
@@ -131,25 +130,27 @@ def duration_to_s(duration)
 end
   
 
-config = YAML::load File.new('config.yaml')
+class Harvester
+  def jabber!
+
 collections = {}
 
-dbi = DBI::connect(config['db']['driver'], config['db']['user'], config['db']['password'])
-
+dbi = @dbi
+config = @config
 
 cl = Jabber::Client.new Jabber::JID.new(config['jabber']['jid'])
 cl.on_exception { |e,|
   puts "HICKUP: #{e.class}: #{e}\n#{e.backtrace.join("\n")}"
   begin
     sleep 5
-    cl.connect('::1')
+    cl.connect config['jabber']['host'] || 'localhost'
     cl.auth config['jabber']['password']
   rescue
     sleep 10
     retry
   end
 }
-cl.connect('::1')
+cl.connect config['jabber']['host'] || 'localhost'
 cl.auth config['jabber']['password']
 
 Jabber::Version::SimpleResponder.new(cl, 'Harvester', '0.6', IO.popen('uname -sr') { |io| io.readlines.to_s.strip })
@@ -274,7 +275,7 @@ cl.add_iq_callback { |iq|
         command.attributes['status'] = 'completed'
         note = command.add(REXML::Element.new('note'))
         note.attributes['type'] = 'info'
-        note.text = 'Thank you for making use of the advanced AstroBot configuration interface. You are truly worth being notified about all that hot stuff!'
+        note.text = 'Thank you for making use of the advanced NotAstroBot configuration interface. You are truly worth being notified about all that hot stuff!'
       else
         # Do nothing, but send a result
         puts "#{iq.from} #{command.attributes['action']} data form"
@@ -412,9 +413,9 @@ loop {
 
     photo = IO::readlines(chart_filename).to_s
     avatar_hash = Digest::SHA1.hexdigest(photo)
-    vcard = Jabber::Vcard::IqVcard.new('NICKNAME' => 'Astrobot',
+    vcard = Jabber::Vcard::IqVcard.new('NICKNAME' => 'NotAstrobot',
                                        'FN' => 'Harvester Jabber notification',
-                                       'URL' => 'http://astroblog.spaceboyz.net/harvester/',
+                                       'URL' => 'http://localhost/',
                                        'PHOTO/TYPE' => 'image/jpeg',
                                        'PHOTO/BINVAL' => Base64::encode64(photo))
     Jabber::Vcard::Helper::set(cl, vcard)
@@ -437,3 +438,5 @@ loop {
   sleep config['jabber']['interval'].to_i
 }
 
+  end
+end
