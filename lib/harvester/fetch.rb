@@ -44,8 +44,8 @@ class Harvester::Fetch
 
       @collections.each { |cfc,cfr|
         if purge_this
-          puts "Must keep #{r} because it's still in #{cfc}" if cfr.include? r
-          purge_this = !(cfr.include? r)
+          puts "Must keep #{r} because it's still in #{cfc}" if cfr && cfr.include?(r)
+          purge_this = !(cfr && cfr.include?(r))
         end
       }
 
