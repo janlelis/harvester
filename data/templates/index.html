@@ -37,7 +37,7 @@
       <body>
 	<div class="head">
 	  <h1>Blog Harvester</h1>
-	  <img src="chart.jpg" class="chart"/>
+	  <img src="chart.jpg" class="chart" alt="Harvested items per day"/>
 	</div>
 	
 	<div class="tickers1">
@@ -56,7 +56,7 @@
               The Harvester is made of fresh flesh from the blogosphere,
               clean design by Tigion
               and hacked-together Ruby scripts by Astro,
-              improved by Neingeist and Josef.
+              improved by Neingeist, Josef and J-_-L.
             </p>
           </div>
           <div class="ticker">
@@ -69,37 +69,13 @@
             </p>
           </div>
           <div class="ticker">
-            <h2>Be notified</h2>
-            <p>Start Jabber and talk to <a href="xmpp:astrobot@spaceboyz.net">AstroBot</a> to receive the freshest of all!</p>
-          </div>
-          <div class="ticker">
-            <h2>Questions</h2>
-            <p>Missing something?<br/>Contact <a href="mailto:astro@spaceboyz.net">Astro</a> via Mail or Jabber: astro@spaceboyz.net</p>
-          </div>
-          <div class="ticker">
-            <h2>Hack it&#8230;</h2>
-            <p>
-	      Old <a href="svn://svn.c3d2.de/harvester/trunk/harvester">SVN</a> but now <a href="http://github.com/astro/harvester/">on GitHub</a>.
-            </p>
-          </div>
-          <div class="ticker">
-            <h2>&#8230;or learn more</h2>
-	    <p>
-              <a href="https://wiki.c3d2.de/Harvester">Project info</a>,
-              <a href="svn://svn.c3d2.de/harvester/trunk/harvester">Repository</a>,
-              <a href="http://trac.c3d2.de/harvester">Trac</a>,
-              <a href="http://trac.c3d2.de/harvester/browser/trunk/harvester/">Source browser</a>
-	    </p>
+            <h2>Info</h2>
+            <p>...</p>
           </div>
 	  <div class="ticker">
-	    <h2>Other Harvesters</h2>
+	    <h2>Links</h2>
             <ul class="tickerlinks">
-	      <!--li><a href="http://chaosnase.de/planet">Chaosnase Planet</a></li-->
-	      <li><a href="http://marvin.blog-harvester.de/">Marvin's Harvester</a></li>
-	      <li><a href="http://planet.entropia.de/">Planet Entropia</a></li>
-	      <li><a href="http://planet.hboeck.de/">Planet Hanno</a></li>
-	      <li><a href="http://planet.schokokeks.org/">Planet Schokokeks</a></li>
-	      <li><a href="http://harvester.toidinamai.de/">toidinamai's planet</a></li>
+	      <li><a href="http://ruby-lang.org/">Ruby</a></li>
 	    </ul>
 	  </div>
 
@@ -113,26 +89,28 @@
         </div>
 
         <div class="tickers2">
-	  <div class="ticker">
-	    <h2>Photos</h2>
+    <xsl:if test="hv:collection-items('photos')/item">
+      <div class="ticker">
+        <h2>Photos</h2>
 
-	    <ul class="photos">
-	      <xsl:for-each select="hv:collection-items('photos')/item">
+        <ul class="photos">
+          <xsl:for-each select="hv:collection-items('photos')/item">
 
-		<xsl:variable name="title" select="title"/>
-		<xsl:variable name="link" select="link"/>
+      <xsl:variable name="title" select="title"/>
+      <xsl:variable name="link" select="link"/>
 
-		<xsl:for-each select="hv:item-images(string(rss),
-				      string(link))//img">
-		  <li>
-		    <a href="{$link}">
-		      <img src="{@src}" title="{$title}"/>
-		    </a>
-		  </li>
-		</xsl:for-each>
-	      </xsl:for-each>
-	    </ul>
-	  </div>
+      <xsl:for-each select="hv:item-images(string(rss),
+                string(link))//img">
+        <li>
+          <a href="{$link}">
+            <img src="{@src}" title="{$title}" alt="{$title}"/>
+          </a>
+        </li>
+      </xsl:for-each>
+          </xsl:for-each>
+        </ul>
+      </div>
+    </xsl:if>
 	  
           <xsl:call-template name="ticker-boxen">
             <xsl:with-param name="collection" select="'links'"/>
