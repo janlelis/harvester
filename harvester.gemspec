@@ -5,11 +5,11 @@ require File.dirname(__FILE__) + "/lib/harvester"
 Gem::Specification.new do |s|
   s.name        = "harvester"
   s.version     = Harvester::VERSION
-  s.authors     = ["FIX"]
+  s.authors     = ["astro", "Neingeist", "Tigion", "Josef Spillner", "Jan Lelis"]
   s.email       = "FIX"
   s.homepage    = "https://github.com/astro/harvester"
-  s.summary     = "Web-based feed aggregator in Ruby"
-  s.description =  "FIX"
+  s.summary     = "Web-based feed aggregator"
+  s.description = "The harvester collects your favourite feeds and generates static html pages"
   s.required_ruby_version = ">= 1.9.2"
   s.required_rubygems_version = ">= 1.3.6"
   s.add_dependency 'dbi'
@@ -21,6 +21,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'gruff'
   s.add_dependency 'xmpp4r'
   s.files = Dir.glob(%w|lib/**/*.rb bin/* [A-Z]*.{txt,rdoc} data/**/* *.yaml|) + %w|README Rakefile harvester.gemspec|
-  s.executables = %w|harvester harvester-fetch harvester-generate harvester-chart harvester-jabber harvester-new|
+  s.executables = Dir['bin/*'].map{|f| File.basename f }
   s.license = "FIX"
 end
