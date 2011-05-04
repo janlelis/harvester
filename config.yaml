@@ -1,0 +1,17 @@
+---
+settings:
+  collections: collections.yaml
+  templates: data/templates
+  output: html
+  size limit: 202400
+  timeout: 90
+db:
+#  driver: dbi:SQLite3:harvestr.sqlite3
+  driver: dbi:Pg:harvest
+  user: harvester
+  password: "1"
+jabber:
+  host: "localhost"
+  jid: bel@localhost/harvester
+  password: bel
+  interval: 120

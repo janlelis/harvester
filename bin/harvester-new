@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+# encoding: utf-8
+
+require 'fileutils'
+require 'yaml'
+
+if ARGV.empty?
+  puts "USAGE: harvester new <project_dir>"  
+  exit
+end
+
+new    = File.expand_path ARGV[0]
+source = File.expand_path File.dirname(__FILE__) + '/..'
+
+FileUtils.mkdir_p new
+FileUtils.cp_r  source + '/data/templates', new + '/templates'
+FileUtils.cp    source + '/collections.yaml', new + '/collections.yaml'
+
+# edit default options
+c = YAML::load_file source + '/config.yaml'
+c['settings']['templates'] = 'templates'
+File.open(new + '/config.yaml', 'w'){|out| YAML.dump(c, out) }
+
+puts 'Created new harvester project at ' + ARGV[0]

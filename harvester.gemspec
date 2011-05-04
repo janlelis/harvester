@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'rmagick'
   s.add_dependency 'gruff'
   s.add_dependency 'xmpp4r'
-  s.files = Dir.glob(%w|lib/**/*.rb bin/* [A-Z]*.{txt,rdoc} data/**/*|) + %w|Rakefile harvester.gemspec|
-  s.executables = %w|harvester harvester-fetch harvester-generate harvester-chart harvester-jabber|
+  s.files = Dir.glob(%w|lib/**/*.rb bin/* [A-Z]*.{txt,rdoc} data/**/* *.yaml|) + %w|Rakefile harvester.gemspec|
+  s.executables = %w|harvester harvester-fetch harvester-generate harvester-chart harvester-jabber harvester-new|
   s.license = "FIX"
 end

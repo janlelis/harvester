@@ -9,7 +9,7 @@ require 'uri'
 
 class Harvester
   def fetch!
-    fetcher = Fetch.new @dbi, @config['collections'], @config['settings']
+    fetcher = Fetch.new @dbi, @collections, @config['settings']
     fetcher.maintenance
     fetcher.get_content
   end

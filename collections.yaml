@@ -1,0 +1,14 @@
+---
+# this file contains all feed urls TODO: add example data
+blogs: # main feeds
+#-
+ticker: # the ticker only shows headlines
+#-
+projects: # e.g. github
+#-
+links: # e.g. delicious
+#-
+photos: # e.g. flickr
+#-
+microblogs: # twitter & identi.ca
+#-

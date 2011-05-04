@@ -8,15 +8,21 @@ require 'yaml'
 class Harvester
   VERSION = '0.8.0.pre'
 
-  attr_reader :config, :dbi
+  attr_reader :config, :collections, :dbi
 
   def initialize(options = {})
-    options[:config] ||= './harvester.yaml'
+    options[:config] ||= './config.yaml'
 
     begin
       @config = YAML::load_file File.expand_path( options[:config] )
     rescue Errno::ENOENT
-      raise LoadError, "Could not find a harvester.yaml config file at #{ File.expand_path( options[:config] ) }"
+      raise LoadError, "Could not find a yaml config file at #{ File.expand_path( options[:config] ) }"
+    end
+
+    begin
+      @collections = YAML::load_file @config['settings']['collections']
+    rescue Errno::ENOENT
+      raise LoadError, "Could not find a yaml collections file at #{ File.expand_path( options[:config] ) }"
     end
 
     begin
