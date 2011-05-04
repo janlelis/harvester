@@ -181,7 +181,7 @@ class Harvester::Fetch
         href = URI::join((rss.link.to_s == '') ? link.to_s : rss.link.to_s, enclosure['href']).to_s
         @dbi.do "INSERT INTO enclosures (rss, link, href, mime, title, length) VALUES (?, ?, ?, ?, ?, ?)",
           rss_url, link, href, enclosure['type'], enclosure['title'],
-          enclosure['length'].empty? ? 0 : enclosure['length']
+          !enclosure['length'] || enclosure['length'].empty? ? 0 : enclosure['length']
       end
     }
     puts "New: #{items_new} Updated: #{items_updated}"
