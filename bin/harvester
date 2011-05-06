@@ -10,8 +10,10 @@ end
 require_relative '../lib/harvester/fetch'
 require_relative '../lib/harvester/generate'
 require_relative '../lib/harvester/chart'
+require_relative '../lib/harvester/post'
 
 harve = Harvester.new_from_argv
 harve.fetch!
 harve.generate!
 harve.chart!
+harve.post!
