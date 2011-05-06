@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.description = "The harvester collects your favourite feeds and generates static html pages"
   s.required_ruby_version = ">= 1.9.2"
   s.required_rubygems_version = ">= 1.3.6"
-  s.add_dependency 'dbi'
+  s.add_dependency 'rdbi'
   s.add_dependency 'eventmachine'
   s.add_dependency 'em-http-request'
   s.add_dependency 'ruby-xslt'

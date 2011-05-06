@@ -5,23 +5,23 @@ require_relative '../harvester'
 class Harvester
   def create!
     puts "Creating database tables..."
-    Dir[ File.dirname(__FILE__) + "/../../data/sql/#{ @dbi.driver_name.downcase }/*.sql" ].each{ |sql|
+    sql_queries(:create).each{ |sql|
       puts "Executing " + File.basename(sql)
-      @dbi.execute File.read( sql )
+      @dbi.execute File.read(sql)
     }
   end
 
   def maintenance!
     puts "Looking for sources to purge..."
     purge = []
-    @dbi.select_all("SELECT collection, rss FROM sources") { |dbc,dbr|
+    @dbi.execute("SELECT collection, rss FROM sources").each{ |dbc,dbr|
       purge << [dbc, dbr] unless (@collections[dbc] || []).include? dbr
     }
 
     purge_rss = []
     purge.each { |c,r|
       puts "Removing #{c}:#{r}..."
-      @dbi.do "DELETE FROM sources WHERE collection=? AND rss=?", c, r
+      @dbi.execute "DELETE FROM sources WHERE collection=? AND rss=?", c, r
       purge_rss << r
     }
 
@@ -39,7 +39,13 @@ class Harvester
     }
     purge_rss.each { |r|
       puts "Purging items from feed #{r}"
-      @dbi.do "DELETE FROM items WHERE rss=?", r
+      @dbi.execute "DELETE FROM items WHERE rss=?", r
     }
+  end
+
+  protected
+
+  def sql_queries(task)
+    Dir[ File.dirname(__FILE__) + "/../../data/sql/#{ @config['db']['driver'].downcase }/#{ task }*.sql" ].each
   end
 end

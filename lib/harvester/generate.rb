@@ -55,10 +55,11 @@ class Harvester::Generate
 
   def generate_root
     root = REXML::Element.new('collections')
-    @dbi.select_all("SELECT collection FROM sources GROUP BY collection") { |name,|
+    @dbi.execute("SELECT collection FROM sources GROUP BY collection").each{ |name,|
       collection = root.add(REXML::Element.new('collection'))
       collection.attributes['name'] = name
-      @dbi.select_all("SELECT rss,title,link,description FROM sources WHERE collection=?", name) { |rss,title,link,description|
+      @dbi.execute("SELECT rss,title,link,description FROM sources WHERE collection=?", name).each{ |rss,title,link,description|
+        #p [title, description]
         feed = collection.add(REXML::Element.new('feed'))
         feed.add(REXML::Element.new('rss')).text = rss
         feed.add(REXML::Element.new('title')).text = title
@@ -72,12 +73,14 @@ class Harvester::Generate
 
   def collection_items(collection, max=23)
     items = REXML::Element.new('items')
-    @dbi.select_all("SELECT items.title,items.date,items.link,items.rss FROM items,sources WHERE items.rss=sources.rss AND sources.collection LIKE ? ORDER BY items.date DESC LIMIT ?", collection, max.to_i) { |title,date,link,rss|
-      item = items.add(REXML::Element.new('item'))
-      item.add(REXML::Element.new('title')).text = title
-      item.add(REXML::Element.new('date')).text = date.to_time.xmlschema
-      item.add(REXML::Element.new('link')).text = link
-      item.add(REXML::Element.new('rss')).text = rss
+    @dbi.execute("SELECT items.title,items.date,items.link,items.rss FROM items,sources WHERE items.rss=sources.rss AND sources.collection LIKE ? ORDER BY items.date DESC LIMIT ?", collection, max.to_i).each{ |title,date,link,rss|
+      if title # TODO: debug (sqlite)
+        item = items.add(REXML::Element.new('item'))
+        item.add(REXML::Element.new('title')).text = title
+        item.add(REXML::Element.new('date')).text = date.to_time.xmlschema
+        item.add(REXML::Element.new('link')).text = link
+        item.add(REXML::Element.new('rss')).text = rss
+      end
     }
 
     EntityTranslator.run(items)
@@ -85,18 +88,28 @@ class Harvester::Generate
 
   def feed_items(rss, max=23)
     items = REXML::Element.new('items')
-    @dbi.select_all("SELECT title,date,link FROM items WHERE rss=? ORDER BY date DESC LIMIT ?", rss, max.to_i) { |title,date,link|
-      item = items.add(REXML::Element.new('item'))
-      item.add(REXML::Element.new('title')).text = title
-      item.add(REXML::Element.new('date')).text = date.to_time.xmlschema
-      item.add(REXML::Element.new('link')).text = link
+    @dbi.execute("SELECT title,date,link FROM items WHERE rss=? ORDER BY date DESC LIMIT ?", rss, max.to_i).each{ |title,date,link| p rss,title,date,link
+      # p title
+      if title # TODO: debug (sqlite)
+        item = items.add(REXML::Element.new('item'))
+        item.add(REXML::Element.new('title')).text = title
+        item.add(REXML::Element.new('date')).text = date.to_time.xmlschema
+        item.add(REXML::Element.new('link')).text = link
+      end
     }
 
     EntityTranslator.run(items)
   end
 
   def item_description(rss, item_link)
-    @dbi.select_all("SELECT description FROM items WHERE rss=? AND link=?", rss, item_link) { |desc,|
+    # FIXME!!!! tmp ugly sqlite fix
+    if @dbi.driver.class.to_s =~ /sqlite3/i
+    a= "SELECT description FROM items WHERE rss='%s' AND link='%s'" % [rss, item_link].map{|e|::SQLite3::Database.quote(e) }
+    b= @dbi.execute(a).fetch
+    else
+    b= @dbi.execute("SELECT description FROM items WHERE rss=? AND link=?", rss, item_link).fetch
+    end
+    b.each{ |desc|
       desc = EntityTranslator.run(desc, false)
       desc = LinkAbsolutizer.run(desc, item_link)
       return desc
@@ -110,13 +123,13 @@ class Harvester::Generate
     REXML::Document.new(desc.to_s).root.each_element('//img') { |img|
       images.add img
     }
-    images
+    mages
   end
 
   def item_enclosures(rss, link)
     #p [rss,link]
     enclosures = REXML::Element.new('enclosures')
-    @dbi.select_all("SELECT href, mime, title, length FROM enclosures WHERE rss=? AND link=? ORDER BY length DESC", rss, link) { |href,mime,title,length|
+    @dbi.execute("SELECT href, mime, title, length FROM enclosures WHERE rss=? AND link=? ORDER BY length DESC", rss, link).each{ |href,mime,title,length|
       enclosure = enclosures.add(REXML::Element.new('enclosure'))
       enclosure.add(REXML::Element.new('href')).text = href
       enclosure.add(REXML::Element.new('mime')).text = mime

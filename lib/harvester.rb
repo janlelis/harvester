@@ -2,7 +2,7 @@ require 'rubygems' unless defined? Gem
 
 require_relative 'harvester/core_ext'
 
-require 'dbi'
+require 'rdbi'
 require 'yaml'
 
 class Harvester
@@ -26,7 +26,12 @@ class Harvester
     end
 
     begin
-      @dbi = DBI::connect( config['db']['driver'], config['db']['user'], config['db']['password'] )
+      require 'rdbi/driver/' + config['db']['driver'].downcase # FIXME?
+
+      @dbi = RDBI::connect config['db']['driver'],
+        :database =>       config['db']['database'],
+        :user =>           config['db']['user'],
+        :password =>       config['db']['password']
     rescue Exception
       warn 'Something is wrong with your database settings:'
       raise

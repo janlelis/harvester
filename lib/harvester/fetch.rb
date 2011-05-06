@@ -36,15 +36,15 @@ class Harvester::Fetch
       end
     }
 
-    @dbi['AutoCommit'] = false
+    #@dbi['AutoCommit'] = false
 
     EM.run do
       pending = []
       @collections.each{ |collection, rss_urls|
         rss_urls and rss_urls.each{ |rss_url|
 
-          db_rss, last = @dbi.select_one "SELECT rss, last FROM sources WHERE collection=? AND rss=?", collection, rss_url
-          is_new = db_rss.nil?
+          db_rss, last = @dbi.execute("SELECT rss, last FROM sources WHERE collection=? AND rss=?", collection, rss_url).fetch
+          is_new = db_rss.nil? || db_rss.empty?
 
           uri = URI::parse rss_url
           p uri
@@ -83,11 +83,11 @@ class Harvester::Fetch
 
                 # update source
                 if is_new
-                  @dbi.do "INSERT INTO sources (collection, rss, last, title, link, description) VALUES (?, ?, ?, ?, ?, ?)",
+                  @dbi.execute "INSERT INTO sources (collection, rss, last, title, link, description) VALUES (?, ?, ?, ?, ?, ?)",
                     collection, rss_url, response['Last-Modified'], rss.title, rss.link, rss.description
                   puts logprefix + "Source added"
                 else
-                  @dbi.do "UPDATE sources SET last=?, title=?, link=?, description=? WHERE collection=? AND rss=?",
+                  @dbi.execute "UPDATE sources SET last=?, title=?, link=?, description=? WHERE collection=? AND rss=?",
                     response['Last-Modified'], rss.title, rss.link, rss.description, collection, rss_url
                   puts logprefix + "Source updated"
                 end
@@ -113,6 +113,7 @@ class Harvester::Fetch
   end    
 
   def update_items(rss, rss_url)
+    p "Updating #{rss_url}"
     items_new, items_updated = 0, 0
     rss.items.each { |item|
       description = item.description
@@ -125,12 +126,13 @@ class Harvester::Fetch
       end
 
       # Push into database
-      db_title = @dbi.select_one "SELECT title FROM items WHERE rss=? AND link=?", rss_url, link
-      item_is_new = db_title.nil?
+      db_title, = *@dbi.execute("SELECT title FROM items WHERE rss=? AND link=?", rss_url, link).fetch
+      p item_is_new = db_title.nil? || db_title.empty?
 
       if item_is_new
         begin
-          @dbi.do "INSERT INTO items (rss, title, link, date, description) VALUES (?, ?, ?, ?, ?)",
+          p "INSERT INTO items (rss, title, link, date, description) VALUES (?, ?, ?, ?, ?)"
+          @dbi.execute "INSERT INTO items (rss, title, link, date, description) VALUES (?, ?, ?, ?, ?)",
             rss_url, item.title, link, item.date.to_s, description
           items_new += 1
         rescue DBI::ProgrammingError
@@ -138,17 +140,17 @@ class Harvester::Fetch
           puts "#{$!.class}: #{$!}\n#{$!.backtrace.join("\n")}"
         end
       else
-        @dbi.do "UPDATE items SET title=?, description=? WHERE rss=? AND link=?",
+        @dbi.execute "UPDATE items SET title=?, description=? WHERE rss=? AND link=?",
           item.title, description, rss_url, link
         items_updated += 1
       end
 
       # Remove all enclosures
-      @dbi.do "DELETE FROM enclosures WHERE rss=? AND link=?", rss_url, link
+      @dbi.execute "DELETE FROM enclosures WHERE rss=? AND link=?", rss_url, link
       # Re-add all enclosures
       item.enclosures.each do |enclosure|
         href = URI::join((rss.link.to_s == '') ? link.to_s : rss.link.to_s, enclosure['href']).to_s
-        @dbi.do "INSERT INTO enclosures (rss, link, href, mime, title, length) VALUES (?, ?, ?, ?, ?, ?)",
+        @dbi.execute "INSERT INTO enclosures (rss, link, href, mime, title, length) VALUES (?, ?, ?, ?, ?, ?)",
           rss_url, link, href, enclosure['type'], enclosure['title'],
           !enclosure['length'] || enclosure['length'].empty? ? 0 : enclosure['length']
       end
