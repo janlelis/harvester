@@ -76,6 +76,10 @@ class Harvester
     require 'optparse'
     OptionParser.new do |op|
       op.banner = "Usage: harvester <command> [options]"
+      op.on('-v', '--version') do
+        puts Harvester::VERSION
+        exit
+      end
       op.on('-c', '--config FILE') do |config|
         options['config'] = config
       end
