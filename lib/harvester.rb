@@ -50,8 +50,8 @@ class Harvester
       end
     )
     @logger.formatter = proc { |level, datetime, appname, msg| "#{msg}\n" }
-    @logger.level = if %w[debug info warn error fatal].include?(@settings['log_level'].downcase)
-      Logger::Severity.const_get(@settings['log_level'].upcase)
+    @logger.level = if %w[debug info warn error fatal].include?(@settings['log_level'].to_s.downcase)
+      Logger::Severity.const_get(@settings['log_level'].to_s.upcase)
     else
       @settings['log_level'].to_i
     end
@@ -96,11 +96,11 @@ class Harvester
   protected
 
   # logger helpers
-  def debug(msg); @logger.debug(msg); end
-  def info(msg);  @logger.info(msg);  end
-  def warn(msg);  @logger.warn(msg);  end
-  def error(msg); @logger.error(msg); end
-  def fatal(msg); @logger.fatal(msg); end
+  def debug(msg) @logger.debug(msg) end
+  def info(msg)  @logger.info(msg)  end
+  def warn(msg)  @logger.warn(msg)  end
+  def error(msg) @logger.error(msg) end
+  def fatal(msg) @logger.fatal(msg) end
 
   def task(msg) # MAYBE: nested spaces+behaviour
     info "[start] " + msg

@@ -86,9 +86,9 @@ class Harvester
             @dbi.execute "INSERT INTO items (rss, title, link, date, description) VALUES (?, ?, ?, ?, ?)",
               rss_url, item.title, link, item.date.to_s, description
             items_new += 1
-          rescue DBI::ProgrammingError
-            puts description
-            puts "#{$!.class}: #{$!}\n#{$!.backtrace.join("\n")}"
+          #rescue DBI::ProgrammingError
+          #  puts description
+          #  puts "#{$!.class}: #{$!}\n#{$!.backtrace.join("\n")}"
           end
         else
           @dbi.execute "UPDATE items SET title=?, description=? WHERE rss=? AND link=?",
