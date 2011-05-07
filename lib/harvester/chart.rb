@@ -1,17 +1,21 @@
 # encoding: utf-8
 
 require_relative '../harvester'
-require_relative 'chart/stats_per_collection'
 
 require 'gruff'
 
 class Harvester
+  module CHART; end
+
   def chart!
-    c = Chart::StatsPerCollection.new
-    @dbi.execute("select date(items.date) as date,sources.collection from items left join sources on sources.rss=items.rss where date > now() - interval '14 days' and date < now() + interval '1 day' order by date").each{ |date,collection|
-      c.add_one(collection, Date.parse(date).day)
-    }
-    Chart.new(c).write File.join( @config['settings']['output'], '/chart.jpg' )
+    info "CHART"
+    task "generate chart" do
+      c = Chart::StatsPerCollection.new
+      @dbi.execute("select date(items.date) as date,sources.collection from items left join sources on sources.rss=items.rss where date > now() - interval '14 days' and date < now() + interval '1 day' order by date").each{ |date,collection|
+        c.add_one(collection, Date.parse(date).day)
+      }
+      Chart.new(c).write File.join( @config['settings']['output'], '/chart.jpg' )
+    end
   end
 end
 
@@ -33,5 +37,34 @@ class Harvester::Chart
 
   def write(path)
     @g.write(path)
+  end
+end
+
+class Harvester::Chart::StatsPerCollection
+  attr_reader :days
+
+  def initialize
+    @collections = {}
+    @days = []
+  end
+
+  def add_one(collection, day)
+    @days << day unless @days.index(day)
+    collection ||= '(unknown)' # TODO research
+
+    c = @collections[collection] || {}
+    c[day] = (c[day] || 0) + 1
+    @collections[collection] = c
+  end
+
+  def each
+    @collections.each { |n,c|
+      v = []
+      @days.each { |d|
+        v << c[d].to_i
+      }
+
+      yield n, v
+    }
   end
 end

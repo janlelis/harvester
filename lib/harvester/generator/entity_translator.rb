@@ -1,12 +1,10 @@
 # encoding: utf-8
-require 'singleton'
+class Harvester; class Generator; end; end
 
-class Harvester; class Generate; end; end
+class Harvester::Generator::EntityTranslator
+  def self.run(doc, with_xmldecl = true, logger = nil)
+    logger ||= Logger.new(STDOUT)
 
-class Harvester::Generate::EntityTranslator
-  include Singleton
-
-  def initialize
     @entities = {}
     %w(HTMLlat1.ent HTMLsymbol.ent HTMLspecial.ent).each do |file|
       begin
@@ -18,15 +16,16 @@ class Harvester::Generate::EntityTranslator
       #  load_entities_from_file(file)
       end
     end
+    translate_entities(doc, with_xmldecl)
   end
 
-  def load_entities_from_file(filename)
+  def self.load_entities_from_file(filename)
     File.read(filename).scan(/<!ENTITY +(.+?) +CDATA +"(.+?)".+?>/m) do |ent,code|
       @entities[ent] = code
     end
   end
 
-  def translate_entities(doc, with_xmldecl = true)
+  def self.translate_entities(doc, with_xmldecl = true)
     oldclass = doc.class
     doc = doc.to_s
 
@@ -41,10 +40,6 @@ class Harvester::Generate::EntityTranslator
     else
       doc
     end
-  end
-
-  def self.run(doc, with_xmldecl = true)
-    instance.translate_entities(doc, with_xmldecl)
   end
 end
 

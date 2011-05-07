@@ -4,36 +4,68 @@ require_relative 'harvester/core_ext'
 
 require 'rdbi'
 require 'yaml'
+require 'logger/colors'
 
 class Harvester
   VERSION = '0.8.0.pre'
 
-  attr_reader :config, :collections, :dbi
+  attr_reader :config, :settings, :collections, :dbi, :logger
 
   def initialize(options = {})
-    options[:config] ||= './config.yaml'
+    # command line options
+    options['config'] ||= './config.yaml'
 
+    # load config
     begin
-      @config = YAML::load_file File.expand_path( options[:config] )
+      config_path = File.expand_path( options.delete('config') )
+      @config = YAML::load_file config_path
     rescue Errno::ENOENT
-      raise LoadError, "Could not find a yaml config file at #{ File.expand_path( options[:config] ) }"
+      raise LoadError, "Could not find a yaml config file at #{ config_path }"
     end
 
+    # instance variable helpers
+    @settings = {
+      'collections' => 'collections.yaml',
+      'timeout'     => 90,
+      'size limit'  => 200_000,
+      'log_level'   => Logger::DEBUG, # 0
+      'log_file'    => STDOUT,
+    }
+    @settings.merge! @config['settings'];
+    @settings.merge! options;
+
+    # load collections
     begin
-      @collections = YAML::load_file @config['settings']['collections']
+      @collections = YAML::load_file @settings['collections']
     rescue Errno::ENOENT
       raise LoadError, "Could not find a yaml collections file at #{ File.expand_path( options[:config] ) }"
     end
 
+    # init logger
+    @logger = Logger.new(
+      if !@settings['log_file'] || @settings['log_file'] =~ /^STD(?:OUT|ERR)$/
+        Object.const_get(@settings['log_file'])
+      else
+        @settings['log_file']
+      end
+    )
+    @logger.formatter = proc { |level, datetime, appname, msg| "#{msg}\n" }
+    @logger.level = if %w[debug info warn error fatal].include?(@settings['log_level'].downcase)
+      Logger::Severity.const_get(@settings['log_level'].upcase)
+    else
+      @settings['log_level'].to_i
+    end
+
+    # connect to db
     begin
       require 'rdbi/driver/' + config['db']['driver'].downcase # FIXME?
 
       @dbi = RDBI::connect config['db']['driver'],
-        :database =>       config['db']['database'],
-        :user =>           config['db']['user'],
-        :password =>       config['db']['password']
+        database:          config['db']['database'],
+        user:              config['db']['user'],
+        password:          config['db']['password']
     rescue Exception
-      warn 'Something is wrong with your database settings:'
+      error 'Something is wrong with your database settings:'
       raise
     end
   end
@@ -42,11 +74,37 @@ class Harvester
     options = {}
 
     require 'optparse'
-    op = OptionParser.new
-    op.on('-c', '--config FILE') do |config_path|
-      options[:config] = config_path
+    OptionParser.new do |op|
+      op.banner = "Usage: harvester <command> [options]"
+      op.on('-c', '--config FILE') do |config|
+        options['config'] = config
+      end
+      op.on('-l', '--log_file FILE') do |log_file|
+        options['log_file'] = log_file
+      end
+      op.on('-L', '--log_level NUMBER') do |log_level|
+        options['log_level'] = log_level
+      end
+      op.on('-p', '--post_script FILE') do |post_script|
+        options['post_script'] = post_script
+      end
     end.parse!
 
-    Harvester.new *options
+    Harvester.new options
+  end
+
+  protected
+
+  # logger helpers
+  def debug(msg); @logger.debug(msg); end
+  def info(msg);  @logger.info(msg);  end
+  def warn(msg);  @logger.warn(msg);  end
+  def error(msg); @logger.error(msg); end
+  def fatal(msg); @logger.fatal(msg); end
+
+  def task(msg) # MAYBE: nested spaces+behaviour
+    info "[start] " + msg
+    yield
+    info "[done ] " + msg
   end
 end

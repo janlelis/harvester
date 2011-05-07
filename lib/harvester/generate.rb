@@ -1,8 +1,8 @@
 # encoding: utf-8
 
 require_relative '../harvester'
-require_relative 'generate/link_absolutizer'
-require_relative 'generate/entity_translator'
+require_relative 'generator/link_absolutizer'
+require_relative 'generator/entity_translator'
 
 require 'fileutils'
 require 'time'
@@ -14,40 +14,47 @@ rescue LoadError
 end
 
 class Harvester
+  module GENERATE; end
+
   def generate!
-    f        = Generate.new @dbi
+    info "GENERATE"
+
+    f        = Generator.new @dbi, @logger
     xslt     = XML::XSLT.new
     xslt.xml = f.generate_root.to_s
 
     default_template_dir = File.dirname(__FILE__) + '/../../data/templates'
-    template_dir = @config['settings']['templates'] || default_template_dir
-    output_dir   = @config['settings']['output']
+    template_dir = @settings['templates'] || default_template_dir
+    output_dir   = @settings['output']
 
-    FileUtils.mkdir_p output_dir
-    puts "Copying static files"
-    FileUtils.cp_r Dir[File.join( template_dir, 'static', '*' )], output_dir
+    task "copy static files" do
+      FileUtils.mkdir_p output_dir
+      FileUtils.cp_r Dir[File.join( template_dir, 'static', '*' )], output_dir
+    end
 
     begin
       Dir.foreach(template_dir) { |template_file|
         next if template_file =~ /^\./ || template_file == 'static'
 
-        puts "Processing #{template_file}"
-        xslt.xsl = File.join( template_dir, template_file )
-        File::open( File.join( output_dir, template_file ), 'w') { |f| f.write(xslt.serve) }
+        task "process #{template_file}" do
+          xslt.xsl = File.join( template_dir, template_file )
+          File::open( File.join( output_dir, template_file ), 'w') { |f| f.write(xslt.serve) }
+        end
       }
     rescue Errno::ENOENT
-      $stderr.puts "Couldn't find templates directory, fallback to default templates!"
+      warn "Couldn't find templates directory, fallback to default templates!"
       template_dir = default_template_dir
       retry
     end
   end
 end
 
-class Harvester::Generate
+class Harvester::Generator
   FUNC_NAMESPACE = 'http://astroblog.spaceboyz.net/harvester/xslt-functions'
 
-  def initialize(dbi)
+  def initialize(dbi, logger)
     @dbi = dbi
+    @logger = logger
     %w(collection-items feed-items item-description item-images item-enclosures).each { |func|
       XML::XSLT.extFunction(func, FUNC_NAMESPACE, self)
     }
@@ -68,7 +75,7 @@ class Harvester::Generate
       }
     }
 
-    EntityTranslator.run(root)
+    EntityTranslator.run(root, true, @logger)
   end
 
   def collection_items(collection, max=23)
@@ -83,12 +90,12 @@ class Harvester::Generate
       end
     }
 
-    EntityTranslator.run(items)
+    EntityTranslator.run(items, true, @logger)
   end
 
   def feed_items(rss, max=23)
     items = REXML::Element.new('items')
-    @dbi.execute("SELECT title,date,link FROM items WHERE rss=? ORDER BY date DESC LIMIT ?", rss, max.to_i).each{ |title,date,link| p rss,title,date,link
+    @dbi.execute("SELECT title,date,link FROM items WHERE rss=? ORDER BY date DESC LIMIT ?", rss, max.to_i).each{ |title,date,link| #p rss,title,date,link
       # p title
       if title # TODO: debug (sqlite)
         item = items.add(REXML::Element.new('item'))
@@ -98,7 +105,7 @@ class Harvester::Generate
       end
     }
 
-    EntityTranslator.run(items)
+    EntityTranslator.run(items, true, @logger)
   end
 
   def item_description(rss, item_link)
@@ -109,9 +116,9 @@ class Harvester::Generate
     else
     b= @dbi.execute("SELECT description FROM items WHERE rss=? AND link=?", rss, item_link).fetch
     end
-    b.each{ |desc|
-      desc = EntityTranslator.run(desc, false)
-      desc = LinkAbsolutizer.run(desc, item_link)
+    b.each{ |desc,|
+      desc = EntityTranslator.run(desc, false, @logger)
+      desc = LinkAbsolutizer.run(desc, item_link, @logger)
       return desc
     }
     ''

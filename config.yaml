@@ -5,9 +5,12 @@ settings:
   output: html
   size limit: 202400
   timeout: 90
+  log_file: STDOUT
+  log_level: debug
 db:
 #  driver: dbi:SQLite3:harvestr.sqlite3
-  driver: dbi:Pg:harvest
+  driver: PostgreSQL
+  database: harvest
   user: harvester
   password: "1"
 jabber:
