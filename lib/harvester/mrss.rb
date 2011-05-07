@@ -84,9 +84,10 @@ class REXML::Element
   end
 end
 
-class AbstractMethod < RuntimeError; end
 
 class MRSS
+  class AbstractMethod < RuntimeError; end
+
   def initialize(root)
     @root = root
   end
@@ -186,7 +187,7 @@ class MRSS
       end
       def date
         d = @e.s_text('date') || @e.s_text('pubDate') || @e.s_text('dc:date')
-        d.to_s.detect_time.localtime
+        MRSS::Util.detect_time(d).localtime
       end
       def enclosures
         r = []
@@ -246,7 +247,7 @@ class MRSS
       end
       def date
         d = @e.s_text('published') || @e.s_text('issued') || @e.s_text('updated')
-        d.to_s.detect_time.localtime
+        MRSS::Util.detect_time(d).localtime
       end
       def enclosures
         r = []
@@ -295,44 +296,44 @@ class MRSS
         end
     k.new(xml)
   end
-end
 
-class String
-  def detect_time
-    s = self
-    tz_offset = 0
+  module Util
+    def self.detect_time(s)
+      s = s.to_s
+      tz_offset = 0
 
-    # Fix it up
-    s.strip!
+      # Fix it up
+      s.strip!
 
-    s.scan(/([\+\-])(\d\d):?(\d\d)$/).each do |plus_minus,hours,minutes|
-      tz_offset = ((hours.to_i * 60) + minutes.to_i) * 60
-      tz_offset *= (plus_minus == '+') ? -1 : 1
+      s.scan(/([\+\-])(\d\d):?(\d\d)$/).each do |plus_minus,hours,minutes|
+        tz_offset = ((hours.to_i * 60) + minutes.to_i) * 60
+        tz_offset *= (plus_minus == '+') ? -1 : 1
+      end
+
+      # 2004-04-01T21:23+00:00
+      # 2004-09-05T21:23Z
+      s.scan(/^(\d+)-(\d+)-(\d+)T(\d+):(\d+)/).each do |y,mo,d,h,m|
+        return Time.gm(y.to_i, mo.to_i, d.to_i, h.to_i, m.to_i) + tz_offset
+      end
+
+      # 2004-04-01T21:23:23+00:00
+      s.scan(/^(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)\+(\d+):(\d+)$/).each do |y,mo,d,h,m,s,tz_h,tz_m|
+        return Time.gm(y.to_i, mo.to_i, d.to_i, h.to_i, m.to_i, s.to_i) + tz_offset
+      end
+
+      # Wed, 20 Apr 2005 19:38:15 +0200
+      # Fri, 22 Apr 2005 10:31:12 GMT
+      months = {"Jan" => 1, "Feb" => 2, "Mar" => 3, "Mär" => 3, "Apr" => 4, "May" => 5, "Mai" => 5, "Jun" => 6, "Jul" => 7, "Aug" => 8, "Sep" => 9, "Oct" => 10, "Okt" => 10, "Nov" => 11, "Dec" => 12, "Dez" => 12 }
+      s.scan(/^(.+?), +(\d+) (.+?) (\d+) (\d+):(\d+):(\d+) /).each do |wday,d,mo,y,h,m,s|
+        return Time.gm(y.to_i, months[mo], d.to_i, h.to_i, m.to_i, s.to_i) + tz_offset
+      end
+
+      # 06 May 2007 02:20:00
+      s.scan(/^(\d+) (.+?) (\d{4}) (\d\d):(\d\d):(\d\d)/).each do |d,mo,y,h,m,s|
+        return Time.gm(y.to_i, months[mo], d.to_i, h.to_i, m.to_i, s.to_i) + tz_offset
+      end
+
+      Time.new
     end
-
-    # 2004-04-01T21:23+00:00
-    # 2004-09-05T21:23Z
-    s.scan(/^(\d+)-(\d+)-(\d+)T(\d+):(\d+)/).each do |y,mo,d,h,m|
-      return Time.gm(y.to_i, mo.to_i, d.to_i, h.to_i, m.to_i) + tz_offset
-    end
-
-    # 2004-04-01T21:23:23+00:00
-    s.scan(/^(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)\+(\d+):(\d+)$/).each do |y,mo,d,h,m,s,tz_h,tz_m|
-      return Time.gm(y.to_i, mo.to_i, d.to_i, h.to_i, m.to_i, s.to_i) + tz_offset
-    end
-
-    # Wed, 20 Apr 2005 19:38:15 +0200
-    # Fri, 22 Apr 2005 10:31:12 GMT
-    months = {"Jan" => 1, "Feb" => 2, "Mar" => 3, "Mär" => 3, "Apr" => 4, "May" => 5, "Mai" => 5, "Jun" => 6, "Jul" => 7, "Aug" => 8, "Sep" => 9, "Oct" => 10, "Okt" => 10, "Nov" => 11, "Dec" => 12, "Dez" => 12 }
-    s.scan(/^(.+?), +(\d+) (.+?) (\d+) (\d+):(\d+):(\d+) /).each do |wday,d,mo,y,h,m,s|
-      return Time.gm(y.to_i, months[mo], d.to_i, h.to_i, m.to_i, s.to_i) + tz_offset
-    end
-
-    # 06 May 2007 02:20:00
-    s.scan(/^(\d+) (.+?) (\d{4}) (\d\d):(\d\d):(\d\d)/).each do |d,mo,y,h,m,s|
-      return Time.gm(y.to_i, months[mo], d.to_i, h.to_i, m.to_i, s.to_i) + tz_offset
-    end
-
-    Time.new
   end
 end

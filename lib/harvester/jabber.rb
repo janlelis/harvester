@@ -132,6 +132,7 @@ end
 
 class Harvester
   def jabber!
+    warn "The jabber bot is not supported, yet. To nevertheless use it, remove this code line."; exit
 
 collections = {}
 

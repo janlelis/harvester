@@ -84,7 +84,7 @@ class Harvester::Generator
       if title # TODO: debug (sqlite)
         item = items.add(REXML::Element.new('item'))
         item.add(REXML::Element.new('title')).text = title
-        item.add(REXML::Element.new('date')).text = date.to_time.xmlschema
+        item.add(REXML::Element.new('date')).text = Time.parse(date).xmlschema
         item.add(REXML::Element.new('link')).text = link
         item.add(REXML::Element.new('rss')).text = rss
       end
@@ -100,7 +100,7 @@ class Harvester::Generator
       if title # TODO: debug (sqlite)
         item = items.add(REXML::Element.new('item'))
         item.add(REXML::Element.new('title')).text = title
-        item.add(REXML::Element.new('date')).text = date.to_time.xmlschema
+        item.add(REXML::Element.new('date')).text = Time.parse(date).xmlschema
         item.add(REXML::Element.new('link')).text = link
       end
     }

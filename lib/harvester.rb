@@ -1,7 +1,4 @@
 require 'rubygems' unless defined? Gem
-
-require_relative 'harvester/core_ext'
-
 require 'rdbi'
 require 'yaml'
 require 'logger/colors'
