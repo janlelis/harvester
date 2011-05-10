@@ -1,0 +1,27 @@
+#!/usr/bin/env ruby
+# encoding: utf-8
+
+require_relative '../lib/harvester'
+# see https://github.com/adamwiggins/clockwork/
+#     https://github.com/adamwiggins/clockwork/blob/master/bin/clockwork
+require 'clockwork'
+include Clockwork
+
+# TODO monkey patch logger instead of puts
+
+# # # # # 
+
+STDERR.sync = STDOUT.sync = true
+
+harve = Harvester.new_from_argv
+harve.logger.info 'CLOCK'
+
+handler do |job|
+  # harve.logger.info '[start] invoke harvester'
+  spawn File.dirname(__FILE__) + '/harvester'
+end
+
+# TODO configure in settings
+every 1.minute, 'run'
+
+run

@@ -24,6 +24,8 @@ Gem::Specification.new do |s|
   # chart
   s.add_dependency 'rmagick'
   s.add_dependency 'gruff'
+  # clock
+  s.add_dependency 'clockwork'
   # jabber
   s.add_dependency 'xmpp4r'
   s.files = Dir.glob(%w|lib/**/*.rb bin/* [A-Z]*.{txt,rdoc} data/**/* *.yaml|) + %w|README Rakefile harvester.gemspec|
