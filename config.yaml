@@ -4,7 +4,8 @@ settings:
   templates: data/templates
   output: html
   size limit: 202400
-  timeout: 90
+  interval: 100
+  timeout: 20
   log_file: STDOUT
   log_level: debug
 db:

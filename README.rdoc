@@ -57,9 +57,9 @@ to get a command list.
 
 == Credits
 
-Astro (2005-2008)
-Neingeist
-Tigion
-Josef Spillner
-J-_-L
-Others (MySQL patch)
+* {Astro}[https://github.com/astro] (2005-2008)
+* Neingeist
+* Tigion
+* Josef Spillner
+* {J-_-L}[https://github.com/janlelis]
+* Others (MySQL patch)

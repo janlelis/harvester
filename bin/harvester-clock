@@ -16,12 +16,20 @@ STDERR.sync = STDOUT.sync = true
 harve = Harvester.new_from_argv
 harve.logger.info 'CLOCK'
 
-handler do |job|
-  # harve.logger.info '[start] invoke harvester'
-  spawn File.dirname(__FILE__) + '/harvester'
+# get interval
+if ARGV.first
+  interval = ARGV.shift.to_i
+else
+  interval =  harve.settings['interval'] || 2.minutes
 end
 
-# TODO configure in settings
-every 1.minute, 'run'
+harve.logger.info "[start] invoke harvester-run every #{ interval } seconds"
+
+handler do |job|
+  # harve.logger.info '[start] invoke harvester'
+  spawn File.dirname(__FILE__) + '/harvester-run'
+end
+
+every interval, 'run'
 
 run
