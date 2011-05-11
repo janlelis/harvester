@@ -1,19 +1,13 @@
 #!/usr/bin/env ruby
 # encoding: utf-8
 
-# call sub-command executable if given
+# call sub-command executable
 if ARGV[0] !~ /^-/ && sub_command = ARGV.shift
   exec "#{ File.dirname(__FILE__) }/harvester-#{ sub_command }", *ARGV
 end
 
-# default - run a harvester update :)
-require_relative '../lib/harvester/fetch'
-require_relative '../lib/harvester/generate'
-require_relative '../lib/harvester/chart'
-require_relative '../lib/harvester/post'
+ARGV << '--help' # if nothing else is set...
 
-harve = Harvester.new_from_argv
-harve.fetch!
-harve.generate!
-harve.chart!
-harve.post!
+# check for options like --version or --help
+require_relative '../lib/harvester'
+Harvester.new_from_argv

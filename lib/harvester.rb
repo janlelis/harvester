@@ -72,7 +72,19 @@ class Harvester
 
     require 'optparse'
     OptionParser.new do |op|
-      op.banner = "Usage: harvester <command> [options]"
+      op.banner = %q{USAGE:
+    harvester <COMMAND> [OPTIONS]
+COMMANDS:
+    run          run a complete harvester update
+    fetch        run only the fetch script
+    generate     run only the generate script
+    chart        run only the generate chart script
+    post         run only the post processing script
+    db           start a database task (create or maintenance)
+    clock        start the scheduler (cron replacement)
+    new          create a new harvester project
+    jabber       start the jabber bot (not implemented yet)
+OPTIONS:}
       op.on('-v', '--version') do
         puts Harvester::VERSION
         exit

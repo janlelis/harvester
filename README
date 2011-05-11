@@ -1,21 +1,10 @@
 Harvester 0.8
 =============
 
-Astro (2005-2008)
-Neingeist
-Tigion
-Josef Spillner
-Others (MySQL patch)
-
-
-About
-=====
-
-The Harvester is a web-based RSS-Aggregator
+The Harvester is a web-based Feed-Aggregator
 
 A running instance can be seen at:
 http://astroblog.spaceboyz.net/harvester/
-
 
 Installation
 ============
@@ -28,25 +17,53 @@ You can now create a new harvester project with
 
   harvester new <project_directory>
 
-Then you will need to configure config.yaml, collections.yaml and the templates to suit your needs (see below).
+Then you will need to configure config.yaml, collections.yaml and the templates to suit your needs (see below). You also have to run harvester db create (in that directory) to create your initial database structure.
 
-Just run
+Configuration
+=============
 
-  harvester
-
-in this directory to see your first results ;)
+* config.yaml
+* collections.yaml
+* supported databases
 
 Usage
 =====
 
-[how harvester and its binaries work]
+Then run
 
-[what are and what to set in config.yaml and collections.yaml]
+  harvester run
 
+in the project directory or run
 
-Not covered yet:
-- DB
-- cronjob
+  harvester run -c path/to/config.yaml
+
+This will create the output files. That's it ;).
+
+Normally, you want to run this command automatically every x seconds/minutes. You can use something like cron, or you can run
+
+  harvester clock
+
+to start a simple scheduler.
+
+There some more harvester commands to explore. Run
+
+  harvester --help
+
+to get a command list.
+
+UNDSONSTNOCHSO
+==============
+
 - Templates
 - Chart
 - Jabberbot
+
+Credits
+=======
+
+Astro (2005-2008)
+Neingeist
+Tigion
+Josef Spillner
+J-_-L
+Others (MySQL patch)
