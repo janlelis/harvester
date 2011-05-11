@@ -1,13 +1,10 @@
-Harvester 0.8
-=============
-
+= Harvester 0.8
 The Harvester is a web-based Feed-Aggregator
 
 A running instance can be seen at:
 http://astroblog.spaceboyz.net/harvester/
 
-Installation
-============
+== Installation
 
 Install the harvester with
 
@@ -19,15 +16,13 @@ You can now create a new harvester project with
 
 Then you will need to configure config.yaml, collections.yaml and the templates to suit your needs (see below). You also have to run harvester db create (in that directory) to create your initial database structure.
 
-Configuration
-=============
+== Configuration
 
 * config.yaml
 * collections.yaml
 * supported databases
 
-Usage
-=====
+== Usage
 
 Then run
 
@@ -51,15 +46,13 @@ There some more harvester commands to explore. Run
 
 to get a command list.
 
-UNDSONSTNOCHSO
-==============
+== UNDSONSTNOCHSO
 
 - Templates
 - Chart
 - Jabberbot
 
-Credits
-=======
+== Credits
 
 Astro (2005-2008)
 Neingeist

@@ -1,0 +1,45 @@
+= Changelog
+
+== 0.8
+* ...
+
+== 0.7
+* XSLT templates
+* Reworked MRSS
+* HTML entity replacement
+* Transactional database handling
+* Favicon, style, photos
+* Microformats in HTML template
+* Chart timeline
+* Jabberbot fixes
+* HTTPS support optional
+
+== 0.6
+* Complete rewrite (excl. MRSS)
+* YAML configuration
+* Database backend (PostgreSQL)
+* Fetcher is not using wget anymore and supports SSL, HTTP authentication and If-Modified-Since
+* Fetcher operates threaded to request feeds parallelized
+* Minor template variables renaming
+
+== 0.5
+* Fixed a syntax error ;-)
+* Multiple further fixes
+* The Jabber-bot
+* ATOM support by Neingeist
+
+== 0.4
+* Blog variables available in <tmpl:iter-item/>
+* index.html Template readability improvements, CSS now in extra
+  file
+
+== 0.3.2
+* All template elements are now escaped by default. Use
+  escape="false" if you really don't want to escape HTML-Tags and
+  such...
+== 0.3.1
+* Fixed bug where incorrect encoded feeds won't be displayed when
+  parsed for the first time
+
+== 0.3
+* Major overhaul

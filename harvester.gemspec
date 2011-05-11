@@ -14,6 +14,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = ">= 1.3.6"
   # main
   s.add_dependency 'rdbi'
+  s.add_dependency 'rdbi-driver-sqlite3'
   s.add_dependency 'logger-colors'
   # fetch
   s.add_dependency 'eventmachine'
@@ -28,7 +29,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'clockwork'
   # jabber
   s.add_dependency 'xmpp4r'
-  s.files = Dir.glob(%w|lib/**/*.rb bin/* [A-Z]*.{txt,rdoc} data/**/* *.yaml|) + %w|README Rakefile harvester.gemspec|
+  s.files = Dir.glob(%w|lib/**/*.rb bin/* [A-Z]*.{txt,rdoc} data/**/* *.yaml|) + %w|Rakefile harvester.gemspec|
   s.executables = Dir['bin/*'].map{|f| File.basename f }
   s.license = "FIX"
 end
