@@ -8,13 +8,5 @@ settings:
   log_file: STDOUT
   log_level: debug
 db:
-#  driver: dbi:SQLite3:harvestr.sqlite3
-  driver: PostgreSQL
-  database: harvest
-  user: harvester
-  password: "1"
-jabber:
-  host: "localhost"
-  jid: bel@localhost/harvester
-  password: bel
-  interval: 120
+  driver: SQLite3
+  database: harvester.sqlite3

@@ -18,9 +18,12 @@ Then you will need to configure config.yaml, collections.yaml and the templates 
 
 == Configuration
 
-* config.yaml
-* collections.yaml
-* supported databases
+<tt>config.yaml</tt> contains general configuration, like paths, logs and timeouts. You can also configure your database there. The default database backend is SQLite3, but all the following ones are supported:
+* SQLite3
+* PostgreSQL
+* MySQL
+
+The <tt>collections.yaml</tt> file contains the links to your desired feeds.
 
 == Usage
 
