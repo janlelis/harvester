@@ -13,7 +13,7 @@ class Harvester
 
   def fetch!
     info "FETCH"
-    maintenance! # unless options TODO
+    maintenance! unless @settings['no-maintenance']
     Fetcher.run @dbi, @collections, @settings, @logger do |*args| update(*args) end # results will be passed to the update function
   end
 end

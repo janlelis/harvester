@@ -28,8 +28,8 @@ class Harvester
       'log_level'   => Logger::DEBUG, # 0
       'log_file'    => STDOUT,
     }
-    @settings.merge! @config['settings'];
-    @settings.merge! options;
+    @settings.merge! @config['settings']
+    @settings.merge! options
 
     # load collections
     begin
@@ -100,6 +100,9 @@ OPTIONS:}
       end
       op.on('-p', '--post_script FILE') do |post_script|
         options['post_script'] = post_script
+      end
+      op.on('-m', '--no-maintenance') do
+        options['no-maintenance'] = true
       end
     end.parse!
 
