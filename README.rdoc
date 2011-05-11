@@ -4,6 +4,8 @@ The Harvester is a web-based Feed-Aggregator
 A running instance can be seen at:
 http://astroblog.spaceboyz.net/harvester/
 
+The Harvester eats the feeds you want and produces a static html/feed page that aggregates all those.
+
 == Installation
 
 Install the harvester with
@@ -14,7 +16,7 @@ You can now create a new harvester project with
 
   harvester new <project_directory>
 
-Then you will need to configure config.yaml, collections.yaml and the templates to suit your needs (see below). You also have to run harvester db create (in that directory) to create your initial database structure.
+Then you will need to configure <tt>config.yaml</tt>, <tt>collections.yaml</tt> and the templates to suit your needs (see below). You also have to run <tt>harvester db create</tt> (in that directory) to create your initial database structure.
 
 == Configuration
 
@@ -37,7 +39,7 @@ in the project directory or run
 
 This will create the output files. That's it ;).
 
-Normally, you want to run this command automatically every x seconds/minutes. You can use something like cron, or you can run
+Usually, you want to run this command automatically every x seconds/minutes. You can use a program like <tt>cron</tt> or simply run
 
   harvester clock
 
@@ -49,11 +51,9 @@ There some more harvester commands to explore. Run
 
 to get a command list.
 
-== UNDSONSTNOCHSO
+== Customizing the templates
 
-- Templates
-- Chart
-- Jabberbot
+...
 
 == Credits
 

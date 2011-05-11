@@ -1,14 +1,15 @@
 ---
-# this file contains all feed urls TODO: add example data
+# this file contains all feed urls 
 blogs: # main feeds
 #-
 ticker: # the ticker only shows headlines
 #-
 projects: # e.g. github
-#-
+#- http://github.com/feeds/astro/commits/harvester/blog-harvester.de
 links: # e.g. delicious
-#-
+#- http://feeds.delicious.com/rss/YYYYYYYYYYYYYY
 photos: # e.g. flickr
-#-
+#- "http://api.flickr.com/services/feeds/photos_public.gne?id=XXXXXXXX@N00&format=atom"
 microblogs: # twitter & identi.ca
-#-
+#- http://twitter.com/statuses/user_timeline/XXXXXXXX.rss
+#- http://identi.ca/api/statuses/user_timeline/YYYYYYYYYYY.atom
