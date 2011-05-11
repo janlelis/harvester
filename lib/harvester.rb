@@ -8,6 +8,7 @@ class Harvester
 
   attr_reader :config, :settings, :collections, :dbi, :logger
 
+  # takes an options string (to which overwrites settings) and creates a new Harvester instance
   def initialize(options = {})
     # command line options
     options['config'] ||= './config.yaml'
@@ -67,6 +68,7 @@ class Harvester
     end
   end
 
+  # creates a new harvester using the command-line options to configure it
   def self.new_from_argv
     options = {}
 
@@ -84,7 +86,7 @@ COMMANDS:
     clock        start the scheduler (cron replacement)
     new          create a new harvester project
     jabber       start the jabber bot (not implemented yet)
-OPTIONS:}
+OPTIONS:} # automatically added as --help
       op.on('-v', '--version') do
         puts Harvester::VERSION
         exit
@@ -118,6 +120,7 @@ OPTIONS:}
   def error(msg) @logger.error(msg) end
   def fatal(msg) @logger.fatal(msg) end
 
+  # adds an info message before and after the block
   def task(msg) # MAYBE: nested spaces+behaviour
     info "[start] " + msg
     yield

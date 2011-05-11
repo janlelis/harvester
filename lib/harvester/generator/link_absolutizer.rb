@@ -1,6 +1,7 @@
 # encoding: utf-8
 class Harvester; class Generator; end; end
 
+# This module rewrites relative to absolute links
 module Harvester::Generator::LinkAbsolutizer
   def self.run(body, base, logger = nil)
     logger ||= Logger.new(STDOUT)

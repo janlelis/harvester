@@ -5,6 +5,7 @@ require_relative '../harvester'
 class Harvester
   module POST; end
 
+  # runs the configured post processing scripts
   def post!(path = nil)
     task "post process" do
       if post_script = path || @config['settings']['post_script']

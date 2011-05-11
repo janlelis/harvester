@@ -16,6 +16,7 @@ end
 class Harvester
   module GENERATE; end
 
+  # generates the static html/feed files
   def generate!
     info "GENERATE"
 
@@ -49,6 +50,7 @@ class Harvester
   end
 end
 
+# generates the static html/feed files
 class Harvester::Generator
   FUNC_NAMESPACE = 'http://astroblog.spaceboyz.net/harvester/xslt-functions'
 

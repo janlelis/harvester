@@ -1,12 +1,12 @@
 # encoding: utf-8
 
 require_relative '../harvester'
-
 require 'gruff'
 
 class Harvester
   module CHART; end
 
+  # generates a fetch statistic image
   def chart!
     info "CHART"
     task "generate chart" do
@@ -19,6 +19,7 @@ class Harvester
   end
 end
 
+# generates a fetch statistics image using gruff
 class Harvester::Chart
   def initialize(stats, options = {}) # TODO configure g with options
     @g = Gruff::Line.new(300)

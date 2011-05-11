@@ -5,6 +5,7 @@ require_relative '../harvester'
 class Harvester
   module DB; end
 
+  # creates required database structure
   def create!
     task "create database tables" do
       begin @dbi.transaction do
@@ -16,6 +17,7 @@ class Harvester
     end
   end
 
+  # check for feed source changes
   def maintenance!
     task "look for sources to purge" do
       purge = []

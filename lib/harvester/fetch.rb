@@ -11,6 +11,7 @@ require 'uri'
 class Harvester
   module FETCH; end
 
+  # fetches new feed updates and store them in the database
   def fetch!
     info "FETCH"
     maintenance! unless @settings['no-maintenance']
@@ -18,6 +19,7 @@ class Harvester
   end
 end
 
+# fetches new feed updates and store them in the database using Eventmachine
 module Harvester::Fetcher
   def self.run(dbi, collections, settings, logger)
     logger.info '[start] fetch using Eventmachine'
