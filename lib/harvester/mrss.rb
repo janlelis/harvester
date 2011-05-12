@@ -25,6 +25,12 @@ class REXML::Element
     (e = s(expr)) ? e.attributes[attr] : nil
   end
 
+  def rss_content(expr) # TODO: understand
+    if e = s(expr)
+      e.children.join
+    end
+  end
+
   def atom_content(expr)
     e = s(expr)
     if e
@@ -32,7 +38,7 @@ class REXML::Element
       mode = e.attributes['mode']
 
       if type == 'xhtml' or mode == 'xml'
-        e.children.to_s
+        e.children.join
       elsif type == 'html' or mode == 'escaped'
         if e.cdatas.size > 0
           e.cdatas.to_s
@@ -181,9 +187,12 @@ class MRSS
         @e.s_text "link"
       end
       def description
-        @e.s_text("content:encoded") ||
-          @e.s_text("encoded") ||
-          @e.s_text("description")
+        @e.rss_content("content:encoded") ||
+          @e.rss_content("encoded") ||
+          @e.rss_content("description")
+#        @e.s_text("content:encoded") ||
+#          @e.s_text("encoded") ||
+#          @e.s_text("description")
       end
       def date
         d = @e.s_text('date') || @e.s_text('pubDate') || @e.s_text('dc:date')
