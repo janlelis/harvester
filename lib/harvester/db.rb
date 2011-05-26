@@ -116,4 +116,8 @@ class Harvester
   def sql_queries(task)
     Dir[ File.dirname(__FILE__) + "/../../data/sql/#{ @config['db']['driver'].downcase }/#{ task }*.sql" ].each
   end
+
+  def sql_query(task)
+    File.dirname(__FILE__) + "/../../data/sql/#{ @config['db']['driver'].downcase }/#{ task }.sql"
+  end
 end

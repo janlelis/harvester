@@ -75,7 +75,7 @@ module Harvester::Fetcher
             if http.response_header.status != 200
               logger.warn rss_url_nice + "HTTP not OK, but: #{ http.response_header.status }"
             elsif http.response.size > settings['size limit'].to_i
-              logger.warn rss_url_nice + "Got too big repsonse: #{response.size} bytes"
+              logger.warn rss_url_nice + "Got too big repsonse: #{ response.size } bytes"
             else
               yield rss_url, new_source, collection, http.response, rss_url_nice
             end
@@ -91,6 +91,6 @@ module Harvester::Fetcher
         EM.stop
       }
     end
-    logger.info '[done]  fetch using Eventmachine'
+    logger.info '[done ] fetch using Eventmachine'
   end
 end

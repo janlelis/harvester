@@ -15,7 +15,7 @@ source = File.expand_path File.dirname(__FILE__) + '/..'
 FileUtils.mkdir_p new
 FileUtils.cp_r  source + '/data/templates', new + '/templates'
 FileUtils.cp    source + '/collections.yaml', new + '/collections.yaml'
-FileUtils.cp    source + '/README', new + '/README'
+FileUtils.cp    source + '/README.rdoc', new + '/README'
 
 # edit default options
 c = YAML::load_file source + '/config.yaml'
