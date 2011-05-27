@@ -343,6 +343,11 @@ class MRSS
         return Time.gm(y.to_i, months[mo], d.to_i, h.to_i, m.to_i, s.to_i) + tz_offset
       end
 
+      # 2011-05-27 17:46:28
+      s.scan(/^(\d{4})-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)/).each do |y,mo,d,h,m,s|
+        return Time.gm(y.to_i, months[mo], d.to_i, h.to_i, m.to_i, s.to_i) + tz_offset
+      end
+
       # 2011-05-27
       s.scan(/^(\d{4})-(\d\d)-(\d\d)/).each do |y,mo,d|
         return Time.gm(y.to_i, months[mo], d.to_i) + tz_offset
