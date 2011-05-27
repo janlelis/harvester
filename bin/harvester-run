@@ -10,5 +10,5 @@ require_relative '../lib/harvester/post'
 harve = Harvester.new_from_argv
 harve.fetch!
 harve.generate!
-harve.chart!
+harve.chart! unless harve.settings['no-chart']
 harve.post!
