@@ -93,8 +93,8 @@ class Harvester
           #  puts "#{$!.class}: #{$!}\n#{$!.backtrace.join("\n")}"
           end
         else
-          @dbi.execute "UPDATE items SET title=?, description=? WHERE rss=? AND link=?",
-            item.title, description, rss_url, link
+          @dbi.execute "UPDATE items SET title=?, description=?, date=? WHERE rss=? AND link=?",
+            item.title, description, item.date.to_s, rss_url, link
           items_updated += 1
         end
 
