@@ -190,9 +190,6 @@ class MRSS
         @e.rss_content("content:encoded") ||
           @e.rss_content("encoded") ||
           @e.rss_content("description")
-#        @e.s_text("content:encoded") ||
-#          @e.s_text("encoded") ||
-#          @e.s_text("description")
       end
       def date
         d = @e.s_text('date') || @e.s_text('pubDate') || @e.s_text('dc:date')
@@ -308,7 +305,6 @@ class MRSS
 
   module Util
     def self.detect_time(s)
-      s = s.to_s
       tz_offset = 0
 
       # Fix it up
@@ -342,6 +338,12 @@ class MRSS
         return Time.gm(y.to_i, months[mo], d.to_i, h.to_i, m.to_i, s.to_i) + tz_offset
       end
 
+      # 2011-05-27
+      s.scan(/^(\d{4})-(\d\d)-(\d\d)/).each do |y,mo,d|
+        return Time.gm(y.to_i, months[mo], d.to_i) + tz_offset
+      end
+
+      # ugly <now> fallback
       Time.new
     end
   end
