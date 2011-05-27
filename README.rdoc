@@ -6,6 +6,10 @@ http://astroblog.spaceboyz.net/harvester/
 
 The Harvester eats the feeds you want and produces a static html/feed page that aggregates all those.
 
+== Warning
+
+Harvester 0.8 is alpha quality! There are still some unfixed bugs (e.g. database stuff)
+
 == Installation
 
 Install the harvester with
@@ -29,6 +33,7 @@ The <tt>collections.yaml</tt> file contains the links to your desired feeds.
 
 == Todo
 * Still some things broken after update
+* Fix database issues
 * Improve/fix feed parsing
 * Tidy up templates
 * Security issues

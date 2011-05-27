@@ -61,7 +61,8 @@ class Harvester
       @dbi = RDBI::connect config['db']['driver'],
         database:          config['db']['database'],
         user:              config['db']['user'],
-        password:          config['db']['password']
+        password:          config['db']['password'],
+        host:              "localhost",
     rescue Exception
       error 'Something is wrong with your database settings:'
       raise
