@@ -27,7 +27,7 @@ class REXML::Element
 
   def rss_content(expr) # TODO: understand & refactor
     if e = s(expr)
-      CGI::unescape(e.children.join)
+      CGI::unescapeHTML(e.children.join)
     end
   end
 
