@@ -25,9 +25,9 @@ class REXML::Element
     (e = s(expr)) ? e.attributes[attr] : nil
   end
 
-  def rss_content(expr) # TODO: understand
+  def rss_content(expr) # TODO: understand & refactor
     if e = s(expr)
-      e.children.join
+      CGI::unescape(e.children.join)
     end
   end
 
