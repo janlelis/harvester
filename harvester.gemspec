@@ -6,8 +6,8 @@ Gem::Specification.new do |s|
   s.name        = "harvester"
   s.version     = Harvester::VERSION
   s.authors     = ["astro", "Neingeist", "Tigion", "Josef Spillner", "Jan Lelis"]
-  s.email       = "FIX"
-  s.homepage    = "https://github.com/astro/harvester"
+  s.email       = "mail@janlelis.de"
+  s.homepage    = "https://github.com/janlelis/harvester"
   s.summary     = "Web-based feed aggregator"
   s.description = "The harvester collects your favourite feeds and generates static html/feed pages"
   s.required_ruby_version = ">= 1.9.2"
@@ -28,8 +28,8 @@ Gem::Specification.new do |s|
   # clock
   s.add_dependency 'clockwork'
   # jabber
-  s.add_dependency 'xmpp4r'
+  # s.add_dependency 'xmpp4r'
   s.files = Dir.glob(%w|lib/**/*.rb bin/* [A-Z]*.{txt,rdoc} data/**/* *.yaml|) + %w|Rakefile harvester.gemspec|
   s.executables = Dir['bin/*'].map{|f| File.basename f }
-  s.license = "FIX"
+  s.license = "AGPL"
 end
