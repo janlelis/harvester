@@ -30,10 +30,12 @@ module Harvester::Generator::LinkAbsolutizer
     }
     html.search('/html/body/*').to_s
   rescue Hpricot::Error => e
-    logger.error "Hpricot::Error: #{e}"
+    logger.error "* hpricot::Error: #{e}"
     body
   rescue LoadError
     logger.warn "* hpricot not found, will not mangle relative links in <description/>"
     body
+  rescue Exception => e
+    logger.warn "* there was an hpricot exception: #{e}"
   end
 end
