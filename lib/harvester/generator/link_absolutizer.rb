@@ -5,37 +5,29 @@ class Harvester; class Generator; end; end
 module Harvester::Generator::LinkAbsolutizer
   def self.run(body, base, logger = nil)
     logger ||= Logger.new(STDOUT)
-    require 'hpricot'
+    require 'nokogiri'
+    require 'uri'
 
-    html = Hpricot("<html><body>#{body}</body></html>")
-    (html/'a').each { |a|
-      begin
-        f = a.get_attribute('href')
-        t = URI::join(base, f.to_s).to_s
-        logger.debug "* rewriting #{f.inspect} => #{t.inspect}" if f != t
-        a.set_attribute('href', t)
-      rescue URI::Error
-        logger.debug "* cannot rewrite relative URL: #{a.get_attribute('href').inspect}" unless a.get_attribute('href') =~ /^[a-z]{2,10}:/
-      end
+    html = Nokogiri::HTML("<html><body>#{body}</body></html>")
+    [%w[img src], %w[a href]].each{ |elem, attr|
+      html.css(elem).each{ |e|
+        begin
+          src = e[attr]
+          uri = URI::join(base, src.to_s).to_s
+          if src.to_s != uri.to_s
+            logger.debug "* rewriting #{src.inspect} => #{uri.inspect}" 
+            e[attr] = uri.to_s
+          end
+        rescue URI::Error
+          logger.debug "* cannot rewrite relative URL: #{src.inspect}" #unless src.to_s =~ /^[a-z]{2,10}:/
+        end
+      }
     }
-    (html/'img').each { |img|
-      begin
-        f = img.get_attribute('src')
-        t = URI::join(base, f.to_s).to_s
-        logger.debug "* rewriting #{f.inspect} => #{t.inspect}" if f != t
-        img.set_attribute('src', t)
-      rescue URI::Error
-        logger.debug "* cannot rewrite relative URL: #{img.get_attribute('href').inspect}" unless img.get_attribute('href') =~ /^[a-z]{2,10}:/
-      end
-    }
-    html.search('/html/body/*').to_s
-  rescue Hpricot::Error => e
-    logger.error "* hpricot::Error: #{e}"
-    body
+    html.css('body').children.to_s
   rescue LoadError
-    logger.warn "* hpricot not found, will not mangle relative links in <description/>"
+    logger.warn "* nokogiri not found, will not mangle relative links in <description/>"
     body
   rescue Exception => e
-    logger.warn "* there was an hpricot exception: #{e}"
+    logger.warn "* there was a nokogiri exception: #{e}"
   end
 end

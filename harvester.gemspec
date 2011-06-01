@@ -14,14 +14,14 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = ">= 1.3.6"
   # main
   s.add_dependency 'rdbi'
-  s.add_dependency 'rdbi-driver-sqlite3'
+  s.add_dependency 'rdbi-driver-sqlite3' # BUGGY oO
   s.add_dependency 'logger-colors'
   # fetch
   s.add_dependency 'eventmachine'
   s.add_dependency 'em-http-request'
   # generate
   s.add_dependency 'ruby-xslt'
-  s.add_dependency 'hpricot'
+  s.add_dependency 'nokogiri'
   # chart
   s.add_dependency 'rmagick'
   s.add_dependency 'gruff'
