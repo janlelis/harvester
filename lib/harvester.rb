@@ -107,8 +107,8 @@ OPTIONS:} # automatically added as --help
       op.on('-m', '--no-maintenance') do
         options['no-maintenance'] = true
       end
-      op.on('-s', '--no-chart') do
-        options['no-chart'] = true
+      op.on('-c', '--chart') do
+        options['chart'] = true
       end
     end.parse!
 
