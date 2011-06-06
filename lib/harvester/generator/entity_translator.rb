@@ -4,7 +4,7 @@ class Harvester; class Generator; end; end
 # This module translates old-fashioned entities into utf-8
 class Harvester::Generator::EntityTranslator
   def self.run(doc, with_xmldecl = true, logger = nil)
-    logger ||= Logger.new(STDOUT)
+    @logger = logger || Logger.new(STDOUT)
 
     @entities = {}
     %w(HTMLlat1.ent HTMLsymbol.ent HTMLspecial.ent).each do |file|
