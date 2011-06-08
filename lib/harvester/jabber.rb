@@ -1,5 +1,7 @@
 # encoding: ascii
 
+# FIXME: fix & integrate, maybe extra-gem?
+
 require_relative '../harvester'
 
 #require 'fastthread'

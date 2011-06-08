@@ -3,8 +3,7 @@
 require_relative '../harvester'
 
 class Harvester
-  module DB; end
-
+  CREATE = true
   # creates required database structure
   def create!
     task "create database tables" do
@@ -17,6 +16,7 @@ class Harvester
     end
   end
 
+  MAINTENANCE = true
   # check for feed source changes
   def maintenance!
     task "look for sources to purge" do
@@ -50,6 +50,7 @@ class Harvester
       }
     end
   end
+  alias purge! maintenance!
 
   private
 

@@ -9,8 +9,7 @@ require 'em-http'
 require 'uri'
 
 class Harvester
-  module FETCH; end
-
+  FETCH = true
   # fetches new feed updates and store them in the database
   def fetch!
     info "FETCH"

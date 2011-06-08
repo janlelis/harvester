@@ -1,6 +1,7 @@
 # encoding: utf-8
 # Magic RSS
 # Helps getting around with RSS while ignoring standards and tolerating much
+# TODO: refactor out of harvester
 
 require 'rexml/document'
 require 'cgi'
@@ -291,9 +292,7 @@ class MRSS
     k = case xml.name
         when 'rss'
           RSS
-        when 'rdf'
-          RDF
-        when 'RDF'
+        when *%w[rdf RDF]
           RDF
         when 'feed'
           ATOM
@@ -303,6 +302,7 @@ class MRSS
     k.new(xml)
   end
 
+  # TODO also refactor out of mrss?
   module Util
     def self.detect_time(s)
       tz_offset = 0

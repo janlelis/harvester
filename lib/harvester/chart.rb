@@ -5,8 +5,8 @@ require_relative '../harvester/db'
 require 'gruff'
 
 class Harvester
-  module CHART; end
 
+  CHART = true
   # generates a fetch statistic image
   def chart!
     info "CHART"
