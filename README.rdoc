@@ -14,7 +14,7 @@ Harvester 0.8 is alpha quality! There are still some unfixed bugs (e.g. database
 
 Install the harvester with
 
-  gem install harvester
+  gem install harvester --pre
 
 You can now create a new harvester project with
 
@@ -45,13 +45,13 @@ This will create the output files. That's it ;).
 
 Usually, you want to run this command automatically every x seconds/minutes. You can use a program like <tt>cron</tt> or simply run
 
-  harvester clock
+  harvester clock <time>
 
 to start a simple scheduler.
 
 There some more harvester commands to explore. Run
 
-  harvester --help
+  harvester
 
 to get a command list.
 
@@ -63,11 +63,12 @@ to get a command list.
 == Todo
 * Still some things broken after update
 * Fix database issues
-* Improve/fix feed parsing
-* Tidy up templates
+* Fix proper feed(atom)/chart generation
+* Improve/fix feed parsing (e.g. enclosures)
+* Tidy up templates / remove astro-specific links
 * Security issues
 * Optimize performance
-* Fix jabberbot
+* Fix jabber bot
 * Implement some kind of tag filters
 
 == Credits
