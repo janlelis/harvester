@@ -84,6 +84,7 @@ module Harvester::Fetcher
           end
         }
       }
+      EM.stop if pending.empty? # e.g. no collections configured
 
       EM.add_timer(settings['timeout'].to_i){
         pending.each { |rss_url| logger.warn rss_url_nice + 'Timed out' }
