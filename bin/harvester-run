@@ -2,13 +2,16 @@
 # encoding: utf-8
 
 # run a complete harvester update :)
+require_relative '../lib/harvester'
 require_relative '../lib/harvester/fetch'
 require_relative '../lib/harvester/generate'
-require_relative '../lib/harvester/chart'
 require_relative '../lib/harvester/post'
 
 harve = Harvester.new_from_argv
+( require_relative '../lib/harvester/maintenance'
+harve.maintenance! ) if harve.settings['maintenance']
 harve.fetch!
 harve.generate!
-harve.chart! if harve.settings['chart']
+( require_relative '../lib/harvester/stats'
+harve.stats! ) if harve.settings['stats']
 harve.post!

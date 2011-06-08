@@ -1,15 +1,13 @@
 # encoding: utf-8
 
 require_relative '../harvester'
-require_relative '../harvester/db'
 require 'gruff'
 
 class Harvester
-
-  CHART = true
+  STATS = true
   # generates a fetch statistic image
-  def chart!
-    info "CHART"
+  def stats!
+    info "STATS"
     task "generate chart" do
       c = Chart::StatsPerCollection.new
       @dbi.execute( File.read( sql_query(:chart) ) ).each{ |date,collection|

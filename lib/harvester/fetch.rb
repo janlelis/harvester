@@ -1,7 +1,6 @@
 # encoding: utf-8
 
 require_relative '../harvester'
-require_relative 'db'
 require_relative 'mrss'
 
 require 'eventmachine'
@@ -13,8 +12,70 @@ class Harvester
   # fetches new feed updates and store them in the database
   def fetch!
     info "FETCH"
-    maintenance! unless @settings['no-maintenance']
-    Fetcher.run @dbi, @collections, @settings, @logger do |*args| update(*args) end # results will be passed to the update function
+    Fetcher.run @dbi, @collections, @settings, @logger do |*args| update_db(*args) end # results will be passed to the update function
+  end
+
+  private
+
+  # saves result of a request in db
+  def update_db(rss_url, new_source, collection, response, rss_url_nice = rss_url)
+    rss = MRSS.parse(response)
+
+    begin @dbi.transaction do
+      # update source
+      if new_source
+        @dbi.execute "INSERT INTO sources (collection, rss, last, title, link, description) VALUES (?, ?, ?, ?, ?, ?)",
+          collection, rss_url, response['Last-Modified'], rss.title, rss.link, rss.description
+        info rss_url_nice + "Added as source"
+      else
+        @dbi.execute "UPDATE sources SET last=?, title=?, link=?, description=? WHERE collection=? AND rss=?",
+          response['Last-Modified'], rss.title, rss.link, rss.description, collection, rss_url
+        debug rss_url_nice + "Source updated"
+      end
+
+      # update items
+      items_new, items_updated = 0, 0
+      rss.items.each { |item|
+        description = item.description
+
+        # Link mangling
+        begin
+          link = URI::join((rss.link.to_s == '') ? uri.to_s : rss.link.to_s, item.link || rss.link).to_s
+        rescue URI::Error
+          link = item.link
+        end
+
+        # Push into database
+        db_title, = *@dbi.execute("SELECT title FROM items WHERE rss=? AND link=?", rss_url, link).fetch
+
+        if db_title.nil? || db_title.empty? # item is new
+          begin
+            @dbi.execute "INSERT INTO items (rss, title, link, date, description) VALUES (?, ?, ?, ?, ?)",
+              rss_url, item.title, link, item.date.to_s, description
+            items_new += 1
+          #rescue DBI::ProgrammingError
+          #  puts description
+          #  puts "#{$!.class}: #{$!}\n#{$!.backtrace.join("\n")}"
+          end
+        else
+          @dbi.execute "UPDATE items SET title=?, description=?, date=? WHERE rss=? AND link=?",
+            item.title, description, item.date.to_s, rss_url, link
+          items_updated += 1
+        end
+
+        # Remove all enclosures
+        @dbi.execute "DELETE FROM enclosures WHERE rss=? AND link=?", rss_url, link
+
+        # Re-add all enclosures
+        item.enclosures.each do |enclosure|
+          href = URI::join((rss.link.to_s == '') ? link.to_s : rss.link.to_s, enclosure['href']).to_s
+          @dbi.execute "INSERT INTO enclosures (rss, link, href, mime, title, length) VALUES (?, ?, ?, ?, ?, ?)",
+            rss_url, link, href, enclosure['type'], enclosure['title'],
+            !enclosure['length'] || enclosure['length'].empty? ? 0 : enclosure['length']
+        end
+      }
+      info rss_url_nice + "#{ items_new } new items, #{ items_updated } updated"
+    end; end
   end
 end
 

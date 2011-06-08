@@ -62,7 +62,7 @@ class Harvester
         database:          config['db']['database'],
         user:              config['db']['user'],
         password:          config['db']['password'],
-        host:              "localhost",
+        host:              "localhost", # FIXME?
     rescue Exception
       error 'Something is wrong with your database settings:'
       raise
@@ -104,11 +104,11 @@ OPTIONS:} # automatically added as --help
       op.on('-p', '--post_script FILE') do |post_script|
         options['post_script'] = post_script
       end
-      op.on('-m', '--no-maintenance') do
-        options['no-maintenance'] = true
+      op.on('-m', '--maintenance') do
+        options['-maintenance'] = true
       end
-      op.on('-c', '--chart') do
-        options['chart'] = true
+      op.on('-s', '--stats') do
+        options['stats'] = true
       end
     end.parse!
 
@@ -124,10 +124,20 @@ OPTIONS:} # automatically added as --help
   def error(msg) @logger.error(msg) end
   def fatal(msg) @logger.fatal(msg) end
 
-  # adds an info message before and after the block
-  def task(msg) # MAYBE: nested spaces+behaviour
+  def task(msg) # adds an info message before and after the block MAYBE: nested spaces+behaviour 
     info "[start] " + msg
     yield
     info "[done ] " + msg
   end
+
+  # database helpers
+  def sql_queries(task)
+    Dir[ File.dirname(__FILE__) + "/../data/sql/#{ @config['db']['driver'].downcase }/#{ task }*.sql" ].each
+  end
+
+  def sql_query(task)
+    File.dirname(__FILE__) + "/../data/sql/#{ @config['db']['driver'].downcase }/#{ task }.sql"
+  end
+
+ 
 end

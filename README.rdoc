@@ -31,16 +31,6 @@ Then you will need to configure <tt>config.yaml</tt>, <tt>collections.yaml</tt> 
 
 The <tt>collections.yaml</tt> file contains the links to your desired feeds.
 
-== Todo
-* Still some things broken after update
-* Fix database issues
-* Improve/fix feed parsing
-* Tidy up templates
-* Security issues
-* Optimize performance
-* Fix jabberbot
-* Implement some kind of tag filters
-
 == Usage
 
 Then run
@@ -68,6 +58,17 @@ to get a command list.
 == Customizing the templates
 
 ...
+
+
+== Todo
+* Still some things broken after update
+* Fix database issues
+* Improve/fix feed parsing
+* Tidy up templates
+* Security issues
+* Optimize performance
+* Fix jabberbot
+* Implement some kind of tag filters
 
 == Credits
 
