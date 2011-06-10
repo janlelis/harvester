@@ -14,8 +14,7 @@ rescue LoadError
 end
 
 class Harvester
-  module GENERATE; end
-
+  GENERATE = true
   # generates the static html/feed files
   def generate!
     info "GENERATE"

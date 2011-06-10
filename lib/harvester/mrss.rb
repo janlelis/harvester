@@ -188,6 +188,7 @@ class MRSS
         @e.s_text "link"
       end
       def description
+        @e.rss_content("itunes:summary") ||
         @e.rss_content("content:encoded") ||
           @e.rss_content("encoded") ||
           @e.rss_content("description")
