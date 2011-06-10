@@ -1,8 +1,8 @@
 = Harvester 0.8
 The Harvester is a web-based Feed-Aggregator
 
-A running instance can be seen at:
-http://astroblog.spaceboyz.net/harvester/
+Running instances can be seen at:
+http://blog-harvester.de or http://rubynetz.de
 
 The Harvester eats the feeds you want and produces a static html/feed page that aggregates all those.
 
@@ -63,9 +63,12 @@ to get a command list.
 == Todo
 * Still some things broken after update
 * Fix database issues
-* Fix proper feed(atom)/chart generation
-* Improve/fix feed parsing (e.g. enclosures)
+* Fix wrong tweet escaping (sometimes: ä-->&auml;)
+* Improve/fix feed parsing (especially atom)
+* Fix chart generation
 * Tidy up templates / remove astro-specific links
+* Extract mrss.rb into extra gem
+
 * Security issues
 * Optimize performance
 * Fix jabber bot
