@@ -4,7 +4,7 @@ require 'yaml'
 require 'logger/colors'
 
 class Harvester
-  VERSION = '0.8.0.pre.2'
+  VERSION = '0.8.0.pre.3'
 
   attr_reader :config, :settings, :collections, :dbi, :logger
 
@@ -138,6 +138,4 @@ OPTIONS:} # automatically added as --help
   def sql_query(task)
     File.dirname(__FILE__) + "/../data/sql/#{ @config['db']['driver'].downcase }/#{ task }.sql"
   end
-
- 
 end
