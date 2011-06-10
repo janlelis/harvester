@@ -40,7 +40,7 @@ class Harvester
 
         # Link mangling
         begin
-          link = URI::join((rss.link.to_s == '') ? uri.to_s : rss.link.to_s, item.link || rss.link).to_s
+          link = URI::join((rss.link.to_s == '') ? URI.parse(rss_url).to_s : rss.link.to_s, item.link || rss.link).to_s
         rescue URI::Error
           link = item.link
         end
@@ -107,7 +107,7 @@ module Harvester::Fetcher
           db_rss, last = dbi.execute("SELECT rss, last FROM sources WHERE collection=? AND rss=?",
                           collection, rss_url).fetch
           new_source = db_rss.nil? || db_rss.empty?
-          uri = URI.parse rss_url
+          uri = URI.parse(rss_url)
 
           # prepare request
           header = {}
@@ -137,7 +137,7 @@ module Harvester::Fetcher
             elsif http.response.size > settings['size limit'].to_i
               logger.warn rss_url_nice + "Got too big repsonse: #{ response.size } bytes"
             else
-              yield rss_url, new_source, collection, http.response, rss_url_nice
+              yield rss_url, new_source, collection, http.response, rss_url_nice # TODO clean up
             end
 
             pending.delete rss_url # same url twice?

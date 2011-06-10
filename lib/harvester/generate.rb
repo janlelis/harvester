@@ -20,7 +20,7 @@ class Harvester
   def generate!
     info "GENERATE"
 
-    f        = Generator.new @dbi, @logger
+    f        = Generator.new @dbi, @settings, @logger
     xslt     = XML::XSLT.new
     xslt.xml = f.generate_root.to_s
 
@@ -54,9 +54,10 @@ end
 class Harvester::Generator
   FUNC_NAMESPACE = 'http://astroblog.spaceboyz.net/harvester/xslt-functions'
 
-  def initialize(dbi, logger)
-    @dbi = dbi
-    @logger = logger
+  def initialize(dbi, settings, logger) # TODO default values for arg2 and arg3
+    @dbi      = dbi
+    @settings = settings
+    @logger   = logger
     %w(collection-items feed-items item-description item-images item-enclosures).each { |func|
       XML::XSLT.extFunction(func, FUNC_NAMESPACE, self)
     }
@@ -80,7 +81,7 @@ class Harvester::Generator
     EntityTranslator.run(root, true, @logger)
   end
 
-  def collection_items(collection, max=23)
+  def collection_items(collection, max = 99)
     items = REXML::Element.new('items')
     @dbi.execute("SELECT items.title,items.date,items.link,items.rss FROM items,sources WHERE items.rss=sources.rss AND sources.collection LIKE ? ORDER BY items.date DESC LIMIT ?", collection, max.to_i).each{ |title,date,link,rss|
       if title # TODO: debug (sqlite)
@@ -95,7 +96,7 @@ class Harvester::Generator
     EntityTranslator.run(items, true, @logger)
   end
 
-  def feed_items(rss, max=23)
+  def feed_items(rss, max = 23)
     items = REXML::Element.new('items')
     @dbi.execute("SELECT title,date,link FROM items WHERE rss=? ORDER BY date DESC LIMIT ?", rss, max.to_i).each{ |title,date,link| #p rss,title,date,link
       # p title

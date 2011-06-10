@@ -81,7 +81,7 @@ COMMANDS:
     run          run a complete harvester update
     fetch        run only the fetch script
     generate     run only the generate script
-    chart        run only the generate chart script
+    stats        run only the generate chart script
     post         run only the post processing script
     db           start a database task (create or maintenance)
     clock        start the scheduler (cron replacement)
@@ -105,7 +105,7 @@ OPTIONS:} # automatically added as --help
         options['post_script'] = post_script
       end
       op.on('-m', '--maintenance') do
-        options['-maintenance'] = true
+        options['maintenance'] = true
       end
       op.on('-s', '--stats') do
         options['stats'] = true
